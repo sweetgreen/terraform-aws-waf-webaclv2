@@ -10,7 +10,7 @@ on:
 
 env:
   TF_VERSION: 0.13.0
-  GO_VERSION: 1.16.3
+  GO_VERSION: 1.17.5
 
 jobs:
   validate:
