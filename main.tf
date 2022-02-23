@@ -197,49 +197,6 @@ resource "aws_wafv2_web_acl" "main" {
                           country_codes = lookup(geo_match_statement.value, "country_codes")
                         }
                       }
-
-                      #scope down NOT regex_pattern_set_reference_statement
-                      dynamic "regex_pattern_set_reference_statement" {
-                        for_each = length(lookup(not_statement.value, "regex_pattern_set_reference_statement", {})) == 0 ? [] : [lookup(not_statement.value, "regex_pattern_set_reference_statement", {})]
-                        content {
-                          arn = lookup(regex_pattern_set_reference_statement.value, "arn")
-                          dynamic "field_to_match" {
-                            for_each = length(lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})) == 0 ? [] : [lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})]
-                            content {
-                              dynamic "uri_path" {
-                                for_each = length(lookup(field_to_match.value, "uri_path", {})) == 0 ? [] : [lookup(field_to_match.value, "uri_path")]
-                                content {}
-                              }
-                              dynamic "all_query_arguments" {
-                                for_each = length(lookup(field_to_match.value, "all_query_arguments", {})) == 0 ? [] : [lookup(field_to_match.value, "all_query_arguments")]
-                                content {}
-                              }
-                              dynamic "body" {
-                                for_each = length(lookup(field_to_match.value, "body", {})) == 0 ? [] : [lookup(field_to_match.value, "body")]
-                                content {}
-                              }
-                              dynamic "method" {
-                                for_each = length(lookup(field_to_match.value, "method", {})) == 0 ? [] : [lookup(field_to_match.value, "method")]
-                                content {}
-                              }
-                              dynamic "query_string" {
-                                for_each = length(lookup(field_to_match.value, "query_string", {})) == 0 ? [] : [lookup(field_to_match.value, "query_string")]
-                                content {}
-                              }
-                              dynamic "single_header" {
-                                for_each = length(lookup(field_to_match.value, "single_header", {})) == 0 ? [] : [lookup(field_to_match.value, "single_header")]
-                                content {
-                                  name = lower(lookup(single_header.value, "name"))
-                                }
-                              }
-                            }
-                          }
-                          text_transformation {
-                            priority = lookup(regex_pattern_set_reference_statement.value, "priority")
-                            type     = lookup(regex_pattern_set_reference_statement.value, "type")
-                          }
-                        }
-                      }
                     }
                   }
                 }
@@ -312,49 +269,6 @@ resource "aws_wafv2_web_acl" "main" {
                           }
                         }
 
-                        #scope down AND regex_pattern_set_reference_statement
-                        dynamic "regex_pattern_set_reference_statement" {
-                          for_each = length(lookup(statement.value, "regex_pattern_set_reference_statement", {})) == 0 ? [] : [lookup(statement.value, "regex_pattern_set_reference_statement", {})]
-                          content {
-                            arn = lookup(regex_pattern_set_reference_statement.value, "arn")
-                            dynamic "field_to_match" {
-                              for_each = length(lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})) == 0 ? [] : [lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})]
-                              content {
-                                dynamic "uri_path" {
-                                  for_each = length(lookup(field_to_match.value, "uri_path", {})) == 0 ? [] : [lookup(field_to_match.value, "uri_path")]
-                                  content {}
-                                }
-                                dynamic "all_query_arguments" {
-                                  for_each = length(lookup(field_to_match.value, "all_query_arguments", {})) == 0 ? [] : [lookup(field_to_match.value, "all_query_arguments")]
-                                  content {}
-                                }
-                                dynamic "body" {
-                                  for_each = length(lookup(field_to_match.value, "body", {})) == 0 ? [] : [lookup(field_to_match.value, "body")]
-                                  content {}
-                                }
-                                dynamic "method" {
-                                  for_each = length(lookup(field_to_match.value, "method", {})) == 0 ? [] : [lookup(field_to_match.value, "method")]
-                                  content {}
-                                }
-                                dynamic "query_string" {
-                                  for_each = length(lookup(field_to_match.value, "query_string", {})) == 0 ? [] : [lookup(field_to_match.value, "query_string")]
-                                  content {}
-                                }
-                                dynamic "single_header" {
-                                  for_each = length(lookup(field_to_match.value, "single_header", {})) == 0 ? [] : [lookup(field_to_match.value, "single_header")]
-                                  content {
-                                    name = lower(lookup(single_header.value, "name"))
-                                  }
-                                }
-                              }
-                            }
-                            text_transformation {
-                              priority = lookup(regex_pattern_set_reference_statement.value, "priority")
-                              type     = lookup(regex_pattern_set_reference_statement.value, "type")
-                            }
-                          }
-                        }
-
                         dynamic "not_statement" {
                           for_each = length(lookup(statement.value, "not_statement", {})) == 0 ? [] : [lookup(statement.value, "not_statement", {})]
                           content {
@@ -424,49 +338,6 @@ resource "aws_wafv2_web_acl" "main" {
                                 content {
                                   key   = lookup(label_match_statement.value, "key")
                                   scope = lookup(label_match_statement.value, "scope")
-                                }
-                              }
-
-                              #scope down NOT regex_pattern_set_reference_statement
-                              dynamic "regex_pattern_set_reference_statement" {
-                                for_each = length(lookup(not_statement.value, "regex_pattern_set_reference_statement", {})) == 0 ? [] : [lookup(not_statement.value, "regex_pattern_set_reference_statement", {})]
-                                content {
-                                  arn = lookup(regex_pattern_set_reference_statement.value, "arn")
-                                  dynamic "field_to_match" {
-                                    for_each = length(lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})) == 0 ? [] : [lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})]
-                                    content {
-                                      dynamic "uri_path" {
-                                        for_each = length(lookup(field_to_match.value, "uri_path", {})) == 0 ? [] : [lookup(field_to_match.value, "uri_path")]
-                                        content {}
-                                      }
-                                      dynamic "all_query_arguments" {
-                                        for_each = length(lookup(field_to_match.value, "all_query_arguments", {})) == 0 ? [] : [lookup(field_to_match.value, "all_query_arguments")]
-                                        content {}
-                                      }
-                                      dynamic "body" {
-                                        for_each = length(lookup(field_to_match.value, "body", {})) == 0 ? [] : [lookup(field_to_match.value, "body")]
-                                        content {}
-                                      }
-                                      dynamic "method" {
-                                        for_each = length(lookup(field_to_match.value, "method", {})) == 0 ? [] : [lookup(field_to_match.value, "method")]
-                                        content {}
-                                      }
-                                      dynamic "query_string" {
-                                        for_each = length(lookup(field_to_match.value, "query_string", {})) == 0 ? [] : [lookup(field_to_match.value, "query_string")]
-                                        content {}
-                                      }
-                                      dynamic "single_header" {
-                                        for_each = length(lookup(field_to_match.value, "single_header", {})) == 0 ? [] : [lookup(field_to_match.value, "single_header")]
-                                        content {
-                                          name = lower(lookup(single_header.value, "name"))
-                                        }
-                                      }
-                                    }
-                                  }
-                                  text_transformation {
-                                    priority = lookup(regex_pattern_set_reference_statement.value, "priority")
-                                    type     = lookup(regex_pattern_set_reference_statement.value, "type")
-                                  }
                                 }
                               }
                             }
@@ -547,49 +418,6 @@ resource "aws_wafv2_web_acl" "main" {
                             arn = lookup(ip_set_reference_statement.value, "arn")
                           }
                         }
-
-                        #scope down OR regex_pattern_set_reference_statement
-                        dynamic "regex_pattern_set_reference_statement" {
-                          for_each = length(lookup(statement.value, "regex_pattern_set_reference_statement", {})) == 0 ? [] : [lookup(statement.value, "regex_pattern_set_reference_statement", {})]
-                          content {
-                            arn = lookup(regex_pattern_set_reference_statement.value, "arn")
-                            dynamic "field_to_match" {
-                              for_each = length(lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})) == 0 ? [] : [lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})]
-                              content {
-                                dynamic "uri_path" {
-                                  for_each = length(lookup(field_to_match.value, "uri_path", {})) == 0 ? [] : [lookup(field_to_match.value, "uri_path")]
-                                  content {}
-                                }
-                                dynamic "all_query_arguments" {
-                                  for_each = length(lookup(field_to_match.value, "all_query_arguments", {})) == 0 ? [] : [lookup(field_to_match.value, "all_query_arguments")]
-                                  content {}
-                                }
-                                dynamic "body" {
-                                  for_each = length(lookup(field_to_match.value, "body", {})) == 0 ? [] : [lookup(field_to_match.value, "body")]
-                                  content {}
-                                }
-                                dynamic "method" {
-                                  for_each = length(lookup(field_to_match.value, "method", {})) == 0 ? [] : [lookup(field_to_match.value, "method")]
-                                  content {}
-                                }
-                                dynamic "query_string" {
-                                  for_each = length(lookup(field_to_match.value, "query_string", {})) == 0 ? [] : [lookup(field_to_match.value, "query_string")]
-                                  content {}
-                                }
-                                dynamic "single_header" {
-                                  for_each = length(lookup(field_to_match.value, "single_header", {})) == 0 ? [] : [lookup(field_to_match.value, "single_header")]
-                                  content {
-                                    name = lower(lookup(single_header.value, "name"))
-                                  }
-                                }
-                              }
-                            }
-                            text_transformation {
-                              priority = lookup(regex_pattern_set_reference_statement.value, "priority")
-                              type     = lookup(regex_pattern_set_reference_statement.value, "type")
-                            }
-                          }
-                        }
                       }
                     }
                   }
@@ -653,48 +481,6 @@ resource "aws_wafv2_web_acl" "main" {
           for_each = length(lookup(rule.value, "ip_set_reference_statement", {})) == 0 ? [] : [lookup(rule.value, "ip_set_reference_statement", {})]
           content {
             arn = lookup(ip_set_reference_statement.value, "arn")
-          }
-        }
-
-        dynamic "regex_pattern_set_reference_statement" {
-          for_each = length(lookup(rule.value, "regex_pattern_set_reference_statement", {})) == 0 ? [] : [lookup(rule.value, "regex_pattern_set_reference_statement", {})]
-          content {
-            arn = lookup(regex_pattern_set_reference_statement.value, "arn")
-            dynamic "field_to_match" {
-              for_each = length(lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})) == 0 ? [] : [lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})]
-              content {
-                dynamic "uri_path" {
-                  for_each = length(lookup(field_to_match.value, "uri_path", {})) == 0 ? [] : [lookup(field_to_match.value, "uri_path")]
-                  content {}
-                }
-                dynamic "all_query_arguments" {
-                  for_each = length(lookup(field_to_match.value, "all_query_arguments", {})) == 0 ? [] : [lookup(field_to_match.value, "all_query_arguments")]
-                  content {}
-                }
-                dynamic "body" {
-                  for_each = length(lookup(field_to_match.value, "body", {})) == 0 ? [] : [lookup(field_to_match.value, "body")]
-                  content {}
-                }
-                dynamic "method" {
-                  for_each = length(lookup(field_to_match.value, "method", {})) == 0 ? [] : [lookup(field_to_match.value, "method")]
-                  content {}
-                }
-                dynamic "query_string" {
-                  for_each = length(lookup(field_to_match.value, "query_string", {})) == 0 ? [] : [lookup(field_to_match.value, "query_string")]
-                  content {}
-                }
-                dynamic "single_header" {
-                  for_each = length(lookup(field_to_match.value, "single_header", {})) == 0 ? [] : [lookup(field_to_match.value, "single_header")]
-                  content {
-                    name = lower(lookup(single_header.value, "name"))
-                  }
-                }
-              }
-            }
-            text_transformation {
-              priority = lookup(regex_pattern_set_reference_statement.value, "priority")
-              type     = lookup(regex_pattern_set_reference_statement.value, "type")
-            }
           }
         }
 
@@ -816,49 +602,6 @@ resource "aws_wafv2_web_acl" "main" {
                   content {
                     key   = lookup(label_match_statement.value, "key")
                     scope = lookup(label_match_statement.value, "scope")
-                  }
-                }
-
-                #scope down regex_pattern_set_reference_statement
-                dynamic "regex_pattern_set_reference_statement" {
-                  for_each = length(lookup(scope_down_statement.value, "regex_pattern_set_reference_statement", {})) == 0 ? [] : [lookup(scope_down_statement.value, "regex_pattern_set_reference_statement", {})]
-                  content {
-                    arn = lookup(regex_pattern_set_reference_statement.value, "arn")
-                    dynamic "field_to_match" {
-                      for_each = length(lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})) == 0 ? [] : [lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})]
-                      content {
-                        dynamic "uri_path" {
-                          for_each = length(lookup(field_to_match.value, "uri_path", {})) == 0 ? [] : [lookup(field_to_match.value, "uri_path")]
-                          content {}
-                        }
-                        dynamic "all_query_arguments" {
-                          for_each = length(lookup(field_to_match.value, "all_query_arguments", {})) == 0 ? [] : [lookup(field_to_match.value, "all_query_arguments")]
-                          content {}
-                        }
-                        dynamic "body" {
-                          for_each = length(lookup(field_to_match.value, "body", {})) == 0 ? [] : [lookup(field_to_match.value, "body")]
-                          content {}
-                        }
-                        dynamic "method" {
-                          for_each = length(lookup(field_to_match.value, "method", {})) == 0 ? [] : [lookup(field_to_match.value, "method")]
-                          content {}
-                        }
-                        dynamic "query_string" {
-                          for_each = length(lookup(field_to_match.value, "query_string", {})) == 0 ? [] : [lookup(field_to_match.value, "query_string")]
-                          content {}
-                        }
-                        dynamic "single_header" {
-                          for_each = length(lookup(field_to_match.value, "single_header", {})) == 0 ? [] : [lookup(field_to_match.value, "single_header")]
-                          content {
-                            name = lower(lookup(single_header.value, "name"))
-                          }
-                        }
-                      }
-                    }
-                    text_transformation {
-                      priority = lookup(regex_pattern_set_reference_statement.value, "priority")
-                      type     = lookup(regex_pattern_set_reference_statement.value, "type")
-                    }
                   }
                 }
 
@@ -1334,49 +1077,6 @@ resource "aws_wafv2_web_acl" "main" {
                   scope = lookup(label_match_statement.value, "scope")
                 }
               }
-
-              # NOT regex_pattern_set_reference_statement
-              dynamic "regex_pattern_set_reference_statement" {
-                for_each = length(lookup(not_statement.value, "regex_pattern_set_reference_statement", {})) == 0 ? [] : [lookup(not_statement.value, "regex_pattern_set_reference_statement", {})]
-                content {
-                  arn = lookup(regex_pattern_set_reference_statement.value, "arn")
-                  dynamic "field_to_match" {
-                    for_each = length(lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})) == 0 ? [] : [lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})]
-                    content {
-                      dynamic "uri_path" {
-                        for_each = length(lookup(field_to_match.value, "uri_path", {})) == 0 ? [] : [lookup(field_to_match.value, "uri_path")]
-                        content {}
-                      }
-                      dynamic "all_query_arguments" {
-                        for_each = length(lookup(field_to_match.value, "all_query_arguments", {})) == 0 ? [] : [lookup(field_to_match.value, "all_query_arguments")]
-                        content {}
-                      }
-                      dynamic "body" {
-                        for_each = length(lookup(field_to_match.value, "body", {})) == 0 ? [] : [lookup(field_to_match.value, "body")]
-                        content {}
-                      }
-                      dynamic "method" {
-                        for_each = length(lookup(field_to_match.value, "method", {})) == 0 ? [] : [lookup(field_to_match.value, "method")]
-                        content {}
-                      }
-                      dynamic "query_string" {
-                        for_each = length(lookup(field_to_match.value, "query_string", {})) == 0 ? [] : [lookup(field_to_match.value, "query_string")]
-                        content {}
-                      }
-                      dynamic "single_header" {
-                        for_each = length(lookup(field_to_match.value, "single_header", {})) == 0 ? [] : [lookup(field_to_match.value, "single_header")]
-                        content {
-                          name = lower(lookup(single_header.value, "name"))
-                        }
-                      }
-                    }
-                  }
-                  text_transformation {
-                    priority = lookup(regex_pattern_set_reference_statement.value, "priority")
-                    type     = lookup(regex_pattern_set_reference_statement.value, "type")
-                  }
-                }
-              }
             }
           }
         }
@@ -1458,50 +1158,6 @@ resource "aws_wafv2_web_acl" "main" {
                     scope = lookup(label_match_statement.value, "scope")
                   }
                 }
-
-                # AND regex_pattern_set_reference_statement
-                dynamic "regex_pattern_set_reference_statement" {
-                  for_each = length(lookup(statement.value, "regex_pattern_set_reference_statement", {})) == 0 ? [] : [lookup(statement.value, "regex_pattern_set_reference_statement", {})]
-                  content {
-                    arn = lookup(regex_pattern_set_reference_statement.value, "arn")
-                    dynamic "field_to_match" {
-                      for_each = length(lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})) == 0 ? [] : [lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})]
-                      content {
-                        dynamic "uri_path" {
-                          for_each = length(lookup(field_to_match.value, "uri_path", {})) == 0 ? [] : [lookup(field_to_match.value, "uri_path")]
-                          content {}
-                        }
-                        dynamic "all_query_arguments" {
-                          for_each = length(lookup(field_to_match.value, "all_query_arguments", {})) == 0 ? [] : [lookup(field_to_match.value, "all_query_arguments")]
-                          content {}
-                        }
-                        dynamic "body" {
-                          for_each = length(lookup(field_to_match.value, "body", {})) == 0 ? [] : [lookup(field_to_match.value, "body")]
-                          content {}
-                        }
-                        dynamic "method" {
-                          for_each = length(lookup(field_to_match.value, "method", {})) == 0 ? [] : [lookup(field_to_match.value, "method")]
-                          content {}
-                        }
-                        dynamic "query_string" {
-                          for_each = length(lookup(field_to_match.value, "query_string", {})) == 0 ? [] : [lookup(field_to_match.value, "query_string")]
-                          content {}
-                        }
-                        dynamic "single_header" {
-                          for_each = length(lookup(field_to_match.value, "single_header", {})) == 0 ? [] : [lookup(field_to_match.value, "single_header")]
-                          content {
-                            name = lower(lookup(single_header.value, "name"))
-                          }
-                        }
-                      }
-                    }
-                    text_transformation {
-                      priority = lookup(regex_pattern_set_reference_statement.value, "priority")
-                      type     = lookup(regex_pattern_set_reference_statement.value, "type")
-                    }
-                  }
-                }
-
 
                 ### AND not_statement
                 dynamic "not_statement" {
@@ -1662,49 +1318,6 @@ resource "aws_wafv2_web_acl" "main" {
                   }
                 }
 
-                # OR regex_pattern_set_reference_statement
-                dynamic "regex_pattern_set_reference_statement" {
-                  for_each = length(lookup(statement.value, "regex_pattern_set_reference_statement", {})) == 0 ? [] : [lookup(statement.value, "regex_pattern_set_reference_statement", {})]
-                  content {
-                    arn = lookup(regex_pattern_set_reference_statement.value, "arn")
-                    dynamic "field_to_match" {
-                      for_each = length(lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})) == 0 ? [] : [lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})]
-                      content {
-                        dynamic "uri_path" {
-                          for_each = length(lookup(field_to_match.value, "uri_path", {})) == 0 ? [] : [lookup(field_to_match.value, "uri_path")]
-                          content {}
-                        }
-                        dynamic "all_query_arguments" {
-                          for_each = length(lookup(field_to_match.value, "all_query_arguments", {})) == 0 ? [] : [lookup(field_to_match.value, "all_query_arguments")]
-                          content {}
-                        }
-                        dynamic "body" {
-                          for_each = length(lookup(field_to_match.value, "body", {})) == 0 ? [] : [lookup(field_to_match.value, "body")]
-                          content {}
-                        }
-                        dynamic "method" {
-                          for_each = length(lookup(field_to_match.value, "method", {})) == 0 ? [] : [lookup(field_to_match.value, "method")]
-                          content {}
-                        }
-                        dynamic "query_string" {
-                          for_each = length(lookup(field_to_match.value, "query_string", {})) == 0 ? [] : [lookup(field_to_match.value, "query_string")]
-                          content {}
-                        }
-                        dynamic "single_header" {
-                          for_each = length(lookup(field_to_match.value, "single_header", {})) == 0 ? [] : [lookup(field_to_match.value, "single_header")]
-                          content {
-                            name = lower(lookup(single_header.value, "name"))
-                          }
-                        }
-                      }
-                    }
-                    text_transformation {
-                      priority = lookup(regex_pattern_set_reference_statement.value, "priority")
-                      type     = lookup(regex_pattern_set_reference_statement.value, "type")
-                    }
-                  }
-                }
-
                 ### OR not_statement
                 dynamic "not_statement" {
                   for_each = length(lookup(statement.value, "not_statement", {})) == 0 ? [] : [lookup(statement.value, "not_statement", {})]
@@ -1778,50 +1391,6 @@ resource "aws_wafv2_web_acl" "main" {
                           scope = lookup(label_match_statement.value, "scope")
                         }
                       }
-
-                      # OR not_statement regex_pattern_set_reference_statement
-                      dynamic "regex_pattern_set_reference_statement" {
-                        for_each = length(lookup(not_statement.value, "regex_pattern_set_reference_statement", {})) == 0 ? [] : [lookup(not_statement.value, "regex_pattern_set_reference_statement", {})]
-                        content {
-                          arn = lookup(regex_pattern_set_reference_statement.value, "arn")
-                          dynamic "field_to_match" {
-                            for_each = length(lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})) == 0 ? [] : [lookup(regex_pattern_set_reference_statement.value, "field_to_match", {})]
-                            content {
-                              dynamic "uri_path" {
-                                for_each = length(lookup(field_to_match.value, "uri_path", {})) == 0 ? [] : [lookup(field_to_match.value, "uri_path")]
-                                content {}
-                              }
-                              dynamic "all_query_arguments" {
-                                for_each = length(lookup(field_to_match.value, "all_query_arguments", {})) == 0 ? [] : [lookup(field_to_match.value, "all_query_arguments")]
-                                content {}
-                              }
-                              dynamic "body" {
-                                for_each = length(lookup(field_to_match.value, "body", {})) == 0 ? [] : [lookup(field_to_match.value, "body")]
-                                content {}
-                              }
-                              dynamic "method" {
-                                for_each = length(lookup(field_to_match.value, "method", {})) == 0 ? [] : [lookup(field_to_match.value, "method")]
-                                content {}
-                              }
-                              dynamic "query_string" {
-                                for_each = length(lookup(field_to_match.value, "query_string", {})) == 0 ? [] : [lookup(field_to_match.value, "query_string")]
-                                content {}
-                              }
-                              dynamic "single_header" {
-                                for_each = length(lookup(field_to_match.value, "single_header", {})) == 0 ? [] : [lookup(field_to_match.value, "single_header")]
-                                content {
-                                  name = lower(lookup(single_header.value, "name"))
-                                }
-                              }
-                            }
-                          }
-                          text_transformation {
-                            priority = lookup(regex_pattern_set_reference_statement.value, "priority")
-                            type     = lookup(regex_pattern_set_reference_statement.value, "type")
-                          }
-                        }
-                      }
-
                     }
                   }
                 }
@@ -1881,7 +1450,7 @@ resource "aws_wafv2_web_acl_association" "alb_list" {
 resource "aws_wafv2_web_acl_logging_configuration" "main" {
   count = var.enabled && var.create_logging_configuration ? 1 : 0
 
-  log_destination_configs = var.log_destination_configs
+  log_destination_configs = [aws_kinesis_firehose_delivery_stream.this[0].arn]
   resource_arn            = aws_wafv2_web_acl.main[0].arn
 
   dynamic "redacted_fields" {
@@ -1935,5 +1504,82 @@ resource "aws_wafv2_web_acl_logging_configuration" "main" {
         }
       }
     }
+  }
+}
+
+
+#####
+# Firehose configuration
+#####
+
+resource "aws_s3_bucket" "this" {
+  count = var.enabled && var.create_logging_configuration ? 1 : 0
+  bucket = var.firehose_bucket_name
+  acl    = "private"
+}
+
+resource "aws_iam_role" "firehose" {
+  count = var.enabled && var.create_logging_configuration ? 1 : 0
+  name  = var.firehose_iam_role_name
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "firehose.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "firehose" {
+  count  = var.enabled && var.create_logging_configuration ? 1 : 0
+  name   = var.firehose_iam_policy_name
+  role   = aws_iam_role.firehose[0].id
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Action": [
+        "s3:AbortMultipartUpload",
+        "s3:GetBucketLocation",
+        "s3:GetObject",
+        "s3:ListBucket",
+        "s3:ListBucketMultipartUploads",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.this[0].arn}",
+        "${aws_s3_bucket.this[0].arn}/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "arn:aws:iam::*:role/aws-service-role/wafv2.amazonaws.com/AWSServiceRoleForWAFV2Logging"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_kinesis_firehose_delivery_stream" "this" {
+  count       = var.enabled && var.create_logging_configuration ? 1 : 0
+  name        = var.firehose_delivery_stream_name
+  destination = "s3"
+
+  s3_configuration {
+    role_arn   = aws_iam_role.firehose[0].arn
+    bucket_arn = aws_s3_bucket.this[0].arn
   }
 }

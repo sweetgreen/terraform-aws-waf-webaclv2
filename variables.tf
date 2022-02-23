@@ -86,3 +86,27 @@ variable "description" {
   description = "A friendly description of the WebACL"
   default     = null
 }
+
+variable "firehose_bucket_name" {
+  type        = string
+  description = "Name of S3 bucket for storing WAF logs"
+  default     = null
+}
+
+variable "firehose_iam_role_name" {
+  type        = string
+  description = "Name of the IAM role for Kinesis Firehose"
+  default     = null
+}
+
+variable "firehose_iam_policy_name" {
+  type        = string
+  description = "Name of the IAM policy that will be attached to the IAM role for Kinesis Firehose"
+  default     = null
+}
+
+variable "firehose_delivery_stream_name" {
+  type        = string
+  description = "Name of the Kinesis Firehose Delivery Stream"
+  default     = null
+}
