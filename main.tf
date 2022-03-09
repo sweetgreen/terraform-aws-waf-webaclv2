@@ -1881,7 +1881,7 @@ resource "aws_wafv2_web_acl_association" "alb_list" {
 resource "aws_wafv2_web_acl_logging_configuration" "main" {
   count = var.enabled && var.create_logging_configuration ? 1 : 0
 
-  log_destination_configs = var.log_destination_configs
+  log_destination_configs = [aws_kinesis_firehose_delivery_stream.this[0].arn]
   resource_arn            = aws_wafv2_web_acl.main[0].arn
 
   dynamic "redacted_fields" {
