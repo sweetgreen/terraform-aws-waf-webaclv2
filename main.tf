@@ -9,6 +9,15 @@ resource "aws_wafv2_web_acl" "main" {
 
   description = var.description
 
+  dynamic "custom_response_body" {
+    for_each = var.custom_response_bodies
+    content {
+      key          = custom_response_body.value.key
+      content      = custom_response_body.value.content
+      content_type = custom_response_body.value.content_type
+    }
+  }
+
   default_action {
     dynamic "allow" {
       for_each = var.allow_default_action ? [1] : []
@@ -43,7 +52,22 @@ resource "aws_wafv2_web_acl" "main" {
 
           dynamic "block" {
             for_each = lookup(rule.value, "action", {}) == "block" ? [1] : []
-            content {}
+            content {
+              dynamic "custom_response" {
+                for_each = length(lookup(rule.value, "custom_response", [])) == 0 ? [] : [lookup(rule.value, "custom_response", {})]
+                content {
+                  custom_response_body_key = lookup(custom_response.value, "custom_response_body_key", null)
+                  response_code            = lookup(custom_response.value, "response_code", 403)
+                  dynamic "response_header" {
+                    for_each = lookup(custom_response.value, "response_headers", [])
+                    content {
+                      name  = lookup(response_header.value, "name")
+                      value = lookup(response_header.value, "value")
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -63,6 +87,12 @@ resource "aws_wafv2_web_acl" "main" {
           }
         }
       }
+      dynamic "rule_label" {
+        for_each = try(rule.value.rule_labels, [])
+        content {
+          name = rule_label.value
+        }
+      }
 
       statement {
 
@@ -71,6 +101,7 @@ resource "aws_wafv2_web_acl" "main" {
           content {
             name        = lookup(managed_rule_group_statement.value, "name")
             vendor_name = lookup(managed_rule_group_statement.value, "vendor_name", "AWS")
+            version     = lookup(managed_rule_group_statement.value, "version", null)
 
             dynamic "excluded_rule" {
               for_each = length(lookup(managed_rule_group_statement.value, "excluded_rule", {})) == 0 ? [] : toset(lookup(managed_rule_group_statement.value, "excluded_rule"))
@@ -131,6 +162,13 @@ resource "aws_wafv2_web_acl" "main" {
                   for_each = length(lookup(scope_down_statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(scope_down_statement.value, "geo_match_statement", {})]
                   content {
                     country_codes = lookup(geo_match_statement.value, "country_codes")
+                    dynamic "forwarded_ip_config" {
+                      for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                      content {
+                        fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                        header_name       = lookup(forwarded_ip_config.value, "header_name")
+                      }
+                    }
                   }
                 }
 
@@ -195,6 +233,13 @@ resource "aws_wafv2_web_acl" "main" {
                         for_each = length(lookup(not_statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(not_statement.value, "geo_match_statement", {})]
                         content {
                           country_codes = lookup(geo_match_statement.value, "country_codes")
+                          dynamic "forwarded_ip_config" {
+                            for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                            content {
+                              fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                              header_name       = lookup(forwarded_ip_config.value, "header_name")
+                            }
+                          }
                         }
                       }
 
@@ -301,6 +346,13 @@ resource "aws_wafv2_web_acl" "main" {
                           for_each = length(lookup(statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(statement.value, "geo_match_statement", {})]
                           content {
                             country_codes = lookup(geo_match_statement.value, "country_codes")
+                            dynamic "forwarded_ip_config" {
+                              for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                              content {
+                                fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                                header_name       = lookup(forwarded_ip_config.value, "header_name")
+                              }
+                            }
                           }
                         }
 
@@ -415,6 +467,13 @@ resource "aws_wafv2_web_acl" "main" {
                                 for_each = length(lookup(not_statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(not_statement.value, "geo_match_statement", {})]
                                 content {
                                   country_codes = lookup(geo_match_statement.value, "country_codes")
+                                  dynamic "forwarded_ip_config" {
+                                    for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                                    content {
+                                      fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                                      header_name       = lookup(forwarded_ip_config.value, "header_name")
+                                    }
+                                  }
                                 }
                               }
 
@@ -537,6 +596,13 @@ resource "aws_wafv2_web_acl" "main" {
                           for_each = length(lookup(statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(statement.value, "geo_match_statement", {})]
                           content {
                             country_codes = lookup(geo_match_statement.value, "country_codes")
+                            dynamic "forwarded_ip_config" {
+                              for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                              content {
+                                fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                                header_name       = lookup(forwarded_ip_config.value, "header_name")
+                              }
+                            }
                           }
                         }
 
@@ -594,6 +660,15 @@ resource "aws_wafv2_web_acl" "main" {
                     }
                   }
                 }
+
+                # Scope down label_match_statement
+                dynamic "label_match_statement" {
+                  for_each = length(lookup(scope_down_statement.value, "label_match_statement", {})) == 0 ? [] : [lookup(scope_down_statement.value, "label_match_statement", {})]
+                  content {
+                    key   = lookup(label_match_statement.value, "key")
+                    scope = lookup(label_match_statement.value, "scope")
+                  }
+                }
               }
             }
           }
@@ -646,6 +721,13 @@ resource "aws_wafv2_web_acl" "main" {
           for_each = length(lookup(rule.value, "geo_match_statement", {})) == 0 ? [] : [lookup(rule.value, "geo_match_statement", {})]
           content {
             country_codes = lookup(geo_match_statement.value, "country_codes")
+            dynamic "forwarded_ip_config" {
+              for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+              content {
+                fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                header_name       = lookup(forwarded_ip_config.value, "header_name")
+              }
+            }
           }
         }
 
@@ -653,6 +735,14 @@ resource "aws_wafv2_web_acl" "main" {
           for_each = length(lookup(rule.value, "ip_set_reference_statement", {})) == 0 ? [] : [lookup(rule.value, "ip_set_reference_statement", {})]
           content {
             arn = lookup(ip_set_reference_statement.value, "arn")
+          }
+        }
+
+        dynamic "label_match_statement" {
+          for_each = length(lookup(rule.value, "label_match_statement", {})) == 0 ? [] : [lookup(rule.value, "label_match_statement", {})]
+          content {
+            key   = lookup(label_match_statement.value, "key")
+            scope = lookup(label_match_statement.value, "scope")
           }
         }
 
@@ -807,6 +897,13 @@ resource "aws_wafv2_web_acl" "main" {
                   for_each = length(lookup(scope_down_statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(scope_down_statement.value, "geo_match_statement", {})]
                   content {
                     country_codes = lookup(geo_match_statement.value, "country_codes")
+                    dynamic "forwarded_ip_config" {
+                      for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                      content {
+                        fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                        header_name       = lookup(forwarded_ip_config.value, "header_name")
+                      }
+                    }
                   }
                 }
 
@@ -923,6 +1020,13 @@ resource "aws_wafv2_web_acl" "main" {
                         for_each = length(lookup(not_statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(not_statement.value, "geo_match_statement", {})]
                         content {
                           country_codes = lookup(geo_match_statement.value, "country_codes")
+                          dynamic "forwarded_ip_config" {
+                            for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                            content {
+                              fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                              header_name       = lookup(forwarded_ip_config.value, "header_name")
+                            }
+                          }
                         }
                       }
 
@@ -995,6 +1099,13 @@ resource "aws_wafv2_web_acl" "main" {
                           for_each = length(lookup(statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(statement.value, "geo_match_statement", {})]
                           content {
                             country_codes = lookup(geo_match_statement.value, "country_codes")
+                            dynamic "forwarded_ip_config" {
+                              for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                              content {
+                                fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                                header_name       = lookup(forwarded_ip_config.value, "header_name")
+                              }
+                            }
                           }
                         }
 
@@ -1080,6 +1191,13 @@ resource "aws_wafv2_web_acl" "main" {
                                 for_each = length(lookup(not_statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(not_statement.value, "geo_match_statement", {})]
                                 content {
                                   country_codes = lookup(geo_match_statement.value, "country_codes")
+                                  dynamic "forwarded_ip_config" {
+                                    for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                                    content {
+                                      fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                                      header_name       = lookup(forwarded_ip_config.value, "header_name")
+                                    }
+                                  }
                                 }
                               }
 
@@ -1156,6 +1274,13 @@ resource "aws_wafv2_web_acl" "main" {
                           for_each = length(lookup(statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(statement.value, "geo_match_statement", {})]
                           content {
                             country_codes = lookup(geo_match_statement.value, "country_codes")
+                            dynamic "forwarded_ip_config" {
+                              for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                              content {
+                                fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                                header_name       = lookup(forwarded_ip_config.value, "header_name")
+                              }
+                            }
                           }
                         }
 
@@ -1230,6 +1355,13 @@ resource "aws_wafv2_web_acl" "main" {
                                 for_each = length(lookup(not_statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(not_statement.value, "geo_match_statement", {})]
                                 content {
                                   country_codes = lookup(geo_match_statement.value, "country_codes")
+                                  dynamic "forwarded_ip_config" {
+                                    for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                                    content {
+                                      fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                                      header_name       = lookup(forwarded_ip_config.value, "header_name")
+                                    }
+                                  }
                                 }
                               }
 
@@ -1259,13 +1391,6 @@ resource "aws_wafv2_web_acl" "main" {
           content {
             statement {
 
-              # Scope down NOT ip_set_statement
-              dynamic "ip_set_reference_statement" {
-                for_each = length(lookup(not_statement.value, "ip_set_reference_statement", {})) == 0 ? [] : [lookup(not_statement.value, "ip_set_reference_statement", {})]
-                content {
-                  arn = lookup(ip_set_reference_statement.value, "arn")
-                }
-              }
               # NOT byte_match_statement
               dynamic "byte_match_statement" {
                 for_each = length(lookup(not_statement.value, "byte_match_statement", {})) == 0 ? [] : [lookup(not_statement.value, "byte_match_statement", {})]
@@ -1315,6 +1440,13 @@ resource "aws_wafv2_web_acl" "main" {
                 for_each = length(lookup(not_statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(not_statement.value, "geo_match_statement", {})]
                 content {
                   country_codes = lookup(geo_match_statement.value, "country_codes")
+                  dynamic "forwarded_ip_config" {
+                    for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                    content {
+                      fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                      header_name       = lookup(forwarded_ip_config.value, "header_name")
+                    }
+                  }
                 }
               }
 
@@ -1439,6 +1571,13 @@ resource "aws_wafv2_web_acl" "main" {
                   for_each = length(lookup(statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(statement.value, "geo_match_statement", {})]
                   content {
                     country_codes = lookup(geo_match_statement.value, "country_codes")
+                    dynamic "forwarded_ip_config" {
+                      for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                      content {
+                        fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                        header_name       = lookup(forwarded_ip_config.value, "header_name")
+                      }
+                    }
                   }
                 }
 
@@ -1557,6 +1696,13 @@ resource "aws_wafv2_web_acl" "main" {
                         for_each = length(lookup(not_statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(not_statement.value, "geo_match_statement", {})]
                         content {
                           country_codes = lookup(geo_match_statement.value, "country_codes")
+                          dynamic "forwarded_ip_config" {
+                            for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                            content {
+                              fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                              header_name       = lookup(forwarded_ip_config.value, "header_name")
+                            }
+                          }
                         }
                       }
 
@@ -1642,6 +1788,13 @@ resource "aws_wafv2_web_acl" "main" {
                   for_each = length(lookup(statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(statement.value, "geo_match_statement", {})]
                   content {
                     country_codes = lookup(geo_match_statement.value, "country_codes")
+                    dynamic "forwarded_ip_config" {
+                      for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                      content {
+                        fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                        header_name       = lookup(forwarded_ip_config.value, "header_name")
+                      }
+                    }
                   }
                 }
 
@@ -1759,6 +1912,13 @@ resource "aws_wafv2_web_acl" "main" {
                         for_each = length(lookup(not_statement.value, "geo_match_statement", {})) == 0 ? [] : [lookup(not_statement.value, "geo_match_statement", {})]
                         content {
                           country_codes = lookup(geo_match_statement.value, "country_codes")
+                          dynamic "forwarded_ip_config" {
+                            for_each = length(lookup(geo_match_statement.value, "forwarded_ip_config", {})) == 0 ? [] : [lookup(geo_match_statement.value, "forwarded_ip_config", {})]
+                            content {
+                              fallback_behavior = lookup(forwarded_ip_config.value, "fallback_behavior")
+                              header_name       = lookup(forwarded_ip_config.value, "header_name")
+                            }
+                          }
                         }
                       }
 
