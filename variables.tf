@@ -110,3 +110,13 @@ variable "firehose_delivery_stream_name" {
   description = "Name of the Kinesis Firehose Delivery Stream"
   default     = null
 }
+
+variable "custom_response_bodies" {
+  type = list(object({
+    key          = string
+    content      = string
+    content_type = string
+  }))
+  description = "Custom response bodies to be referenced on a per rule basis. https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/wafv2_web_acl#custom-response-body"
+  default     = []
+}
