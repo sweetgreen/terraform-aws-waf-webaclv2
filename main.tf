@@ -101,7 +101,6 @@ resource "aws_wafv2_web_acl" "main" {
           content {
             name        = lookup(managed_rule_group_statement.value, "name")
             vendor_name = lookup(managed_rule_group_statement.value, "vendor_name", "AWS")
-            version     = lookup(managed_rule_group_statement.value, "version", null)
 
             dynamic "excluded_rule" {
               for_each = length(lookup(managed_rule_group_statement.value, "excluded_rule", {})) == 0 ? [] : toset(lookup(managed_rule_group_statement.value, "excluded_rule"))
@@ -845,7 +844,7 @@ resource "aws_wafv2_web_acl" "main" {
               }
             }
 
-            dynamic "scope_down_statement" {
+            dynamic "scope_down_statement" {  
               for_each = length(lookup(rate_based_statement.value, "scope_down_statement", {})) == 0 ? [] : [lookup(rate_based_statement.value, "scope_down_statement", {})]
               content {
                 # scope down byte_match_statement
